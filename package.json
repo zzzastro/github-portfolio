@@ -2,9 +2,9 @@
   "name": "portfolio-self",
   "version": "0.0.0",
   "engines": {
-   "node": ">=18.19.0",
-   "npm": ">=9.8.0"
- },
+    "node": ">=18.19.0",
+    "npm": ">=9.8.0"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -28,8 +28,6 @@
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^19.1.4",
-    "@angular/cli": "^19.1.4",
     "@angular-devkit/build-angular": "^19.1.5",
     "@angular/cli": "^19.1.5",
     "@angular/compiler-cli": "^19.1.0",

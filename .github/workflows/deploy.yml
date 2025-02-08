@@ -3,51 +3,49 @@ name: Deploy Angular to GitHub Pages
 on:
   push:
     branches:
-      - main  # Trigger deployment on pushes to main branch
+      - main  # Trigger on main branch pushes
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Required for pushing to gh-pages
-      pages: write     # Needed for GitHub Pages integration
-      id-token: write  # Required for GitHub Actions authentication
+      contents: write
+      pages: write
+      id-token: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Get full commit history for proper versioning
+          fetch-depth: 0  # Full history for proper versioning
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18.19.0'  # Match .nvmrc or package.json engines
-          cache: 'npm'            # Cache node_modules for faster builds
+          node-version: '18.19.0'  # Matches your Angular version
+          cache: 'npm'  # Cache node_modules
 
       - name: Install dependencies
-        run: npm ci  # Clean install for reproducible builds (better than npm install)
+        run: npm ci  # Clean install
 
       - name: Build production version
-        run: npm run build -- --configuration production
+        run: npm run build -- --configuration production --output-path=dist/github-portfolio/browser
         env:
-          NODE_OPTIONS: '--max_old_space_size=4096'  # Prevent memory issues
+          NODE_OPTIONS: '--max_old_space_size=4096'  # Memory allocation
 
-      - name: Add .nojekyll file
+      - name: Verify build output
         run: |
-          touch dist/github-portfolio/browser/.nojekyll
-          echo "Disabling Jekyll processing"          
-        # Critical for Angular apps - prevents GitHub's default Jekyll processing
-        # that would ignore files starting with underscores (_next, _nuxt, etc.)
+          ls -R dist/github-portfolio/browser  # List built files
+          [ -f dist/github-portfolio/browser/.nojekyll ] || exit 1  # Verify .nojekyll
+          [ -f dist/github-portfolio/browser/404.html ] || exit 1  # Verify 404 page
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
           folder: dist/github-portfolio/browser
-          clean: true             # Remove existing files before deployment
-          single-commit: true     # Maintain clean commit history
-          force: false            # Safety measure to prevent accidental force pushes
-          quiet: false            # Show detailed deployment logs
+          clean: true
+          single-commit: true
+          force: false
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Automatic authentication
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

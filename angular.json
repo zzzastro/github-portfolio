@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "portfolio-self": {
+    "github-portfolio": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,9 +13,10 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/portfolio-self",
+            "outputPath": "dist/github-portfolio",
             "index": "src/index.html",
             "browser": "src/main.ts",
+            "baseHref": "/github-portfolio/",
             "polyfills": [
               "zone.js"
             ],
@@ -30,6 +31,11 @@
               {
                 "glob": "**/*",
                 "input": "public",
+                "output": "/"
+              },
+              {
+                "glob": "404.html",
+                "input": "src",
                 "output": "/"
               }
             ],
@@ -66,10 +72,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "portfolio-self:build:production"
+              "buildTarget": "github-portfolio:build:production"
             },
             "development": {
-              "buildTarget": "portfolio-self:build:development"
+              "buildTarget": "github-portfolio:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -98,6 +104,9 @@
             ],
             "scripts": []
           }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy"
         }
       }
     }

@@ -1,34 +1,53 @@
-name: Deploy to GitHub Pages
+name: Deploy Angular to GitHub Pages
 
 on:
   push:
     branches:
-      - main  
+      - main  # Trigger deployment on pushes to main branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pages: write
-      id-token: write
+      contents: write  # Required for pushing to gh-pages
+      pages: write     # Needed for GitHub Pages integration
+      id-token: write  # Required for GitHub Actions authentication
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Get full commit history for proper versioning
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18.19.0'  # Match package.json engine version
+          node-version: '18.19.0'  # Match .nvmrc or package.json engines
+          cache: 'npm'            # Cache node_modules for faster builds
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci  # Clean install for reproducible builds (better than npm install)
 
-      - name: Build
-        run: npm run build
+      - name: Build production version
+        run: npm run build -- --configuration production
+        env:
+          NODE_OPTIONS: '--max_old_space_size=4096'  # Prevent memory issues
+
+      - name: Add .nojekyll file
+        run: |
+          touch dist/github-portfolio/browser/.nojekyll
+          echo "Disabling Jekyll processing"          
+        # Critical for Angular apps - prevents GitHub's default Jekyll processing
+        # that would ignore files starting with underscores (_next, _nuxt, etc.)
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: dist/github-portfolio/browser  # Angular 19 output path
           branch: gh-pages
+          folder: dist/github-portfolio/browser
+          clean: true             # Remove existing files before deployment
+          single-commit: true     # Maintain clean commit history
+          force: false            # Safety measure to prevent accidental force pushes
+          quiet: false            # Show detailed deployment logs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Automatic authentication

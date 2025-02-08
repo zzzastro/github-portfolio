@@ -53,7 +53,7 @@ export class AppComponent implements AfterViewInit, OnInit {
     {
       title: 'PDF Annotator',
       description: 'Tool that provides users with annotation capabilities to PDF documents.',
-      media: { type: 'image', src: 'assets/projects/project3.jpg' },
+      media: { type: 'image', src: 'assets/projects/project.jpg' },
       link: ''
     },
 
@@ -92,9 +92,6 @@ export class AppComponent implements AfterViewInit, OnInit {
     }
   }
   
-  
-  
-
   ngAfterViewInit(): void {
     setTimeout(() => {
       if (!window.location.hash) {

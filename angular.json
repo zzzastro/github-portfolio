@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/github-portfolio/browser",
+            "outputPath": "dist/github-portfolio",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "baseHref": "/github-portfolio/",
@@ -29,12 +29,12 @@
               {
                 "glob": "404.html",
                 "input": "src",
-                "output": "/"
+                "output": "browser"
               },
               {
                 "glob": ".nojekyll",
                 "input": "src",
-                "output": "/"
+                "output": "browser"
               }
             ],
             "styles": ["src/styles.css"],

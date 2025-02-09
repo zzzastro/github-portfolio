@@ -29,12 +29,12 @@
               {
                 "glob": "404.html",
                 "input": "src",
-                "output": "browser"
+                "output": "."
               },
               {
                 "glob": ".nojekyll",
                 "input": "src",
-                "output": "browser"
+                "output": "."
               }
             ],
             "styles": ["src/styles.css"],

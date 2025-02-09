@@ -17,6 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0  # Full history for proper versioning
 
       - name: Setup Node.js
@@ -29,15 +30,17 @@ jobs:
         run: npm ci  # Clean install
 
       - name: Build production version
-        run: npm run build -- --configuration production --output-path=dist/github-portfolio/browser
+        run: npm run build
         env:
           NODE_OPTIONS: '--max_old_space_size=4096'  # Memory allocation
 
-      - name: Verify build output
+      - name: Create necessary files
         run: |
-          ls -R dist/github-portfolio/browser  # List built files
-          [ -f dist/github-portfolio/browser/.nojekyll ] || exit 1  # Verify .nojekyll
-          [ -f dist/github-portfolio/browser/404.html ] || exit 1  # Verify 404 page
+          touch dist/github-portfolio/browser/.nojekyll
+          cp src/404.html dist/github-portfolio/browser/404.html
+
+      - name: List files
+        run: ls -la dist/github-portfolio/browser
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
@@ -46,6 +49,4 @@ jobs:
           folder: dist/github-portfolio/browser
           clean: true
           single-commit: true
-          force: false
-        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

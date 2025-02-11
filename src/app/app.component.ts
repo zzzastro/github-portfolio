@@ -1,7 +1,6 @@
-import { Component, AfterViewInit, OnInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit, Renderer2, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from './navbar/navbar.component';
-import { SakuraBlossomComponent } from './sakura-blossom/sakura-blossom.component';
 import { ParticlesBackgroundComponent } from './particles-background/particles-background.component';
 
 interface Project {
@@ -18,18 +17,10 @@ interface Project {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements AfterViewInit, OnInit {
-
-  ngOnInit(): void {
-    // Remove fragment from URL
-    if (window.location.hash) {
-      const cleanUrl = window.location.href.split('#')[0];
-      window.history.replaceState({}, document.title, cleanUrl);
-      window.scrollTo(0, 0);
-    }
-  }
+export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   title = 'portfolio-self';
+
 
   projects: Project[] = [
     {
@@ -59,75 +50,88 @@ export class AppComponent implements AfterViewInit, OnInit {
 
   ];
 
-  contactEmail() {
-    const email = 'ashish.bhatt.app@gmail.com';
-    const subject = 'Regarding Your Portfolio';
-    window.open(`https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=${email}&su=${encodeURIComponent(subject)}`, '_blank');
-  }
+  private navLinkUnlisteners: (() => void)[] = [];
 
-  // Handle Missing Media Errors
-  handleMediaError(event: Event) {
-    const target = event.target as HTMLImageElement | HTMLVideoElement;
-  
-    if (target instanceof HTMLImageElement) {
-      target.src = 'assets/fallback-image.png'; // Fallback for images
-    } else if (target instanceof HTMLVideoElement) {
-      // Fallback for video
-      target.setAttribute('poster', 'assets/fallback-image.png'); // Set poster image as fallback
-      target.style.display = 'none'; // Hide the video itself
-  
-      // Create a fallback image element
-      const fallbackImage = document.createElement('img');
-      fallbackImage.src = 'assets/fallback-image.png';
-      fallbackImage.alt = 'Video not available';
-  
-      // Apply CSS class for styling (this should apply the styles from the CSS file)
-      fallbackImage.classList.add('fallback-media');
-  
-      // Check if the class is properly applied (for debugging)
-      console.log(fallbackImage.classList); // Debugging log
-  
-      // Insert the fallback image inside the video container
-      target.parentElement?.appendChild(fallbackImage); 
+  constructor(private renderer: Renderer2) { }
+
+  ngOnInit(): void {
+    // Remove URL fragment (if any) on initial load and scroll to the top
+    if (window.location.hash) {
+      const cleanUrl = window.location.href.split('#')[0];
+      window.history.replaceState({}, document.title, cleanUrl);
+      window.scrollTo(0, 0);
     }
   }
-  
+
   ngAfterViewInit(): void {
+    // Ensure page is scrolled to the top after view initialization
     setTimeout(() => {
       if (!window.location.hash) {
         window.scrollTo(0, 0);
       }
     }, 100);
 
+    // Attach click event listeners to navigation links using Renderer2
     const navLinks = document.querySelectorAll('.nav-center a');
-
     navLinks.forEach(link => {
-      link.addEventListener('click', (event) => {
-        event.preventDefault(); // Prevent default anchor behavior
-        const targetId = link.getAttribute('href');
+      const unlisten = this.renderer.listen(link, 'click', (event: Event) => {
+        event.preventDefault();
+        const targetId = (link as HTMLAnchorElement).getAttribute('href');
         if (targetId) {
           const targetSection = document.querySelector(targetId) as HTMLElement;
           if (targetSection) {
-            // Remove the bounce-animation class to reset the animation
+            // Reset and trigger the bounce animation
             targetSection.classList.remove('bounce-animation');
-
-            // Force reflow to allow the browser to register the removal
-            void targetSection.offsetWidth; // Trigger reflow
-
-            // Add the bounce-animation class to trigger the bounce effect
+            void targetSection.offsetWidth; // Force reflow to restart animation
             targetSection.classList.add('bounce-animation');
-
-            // Scroll to the target section immediately
+            // Smooth scroll to the target section
             targetSection.scrollIntoView({ behavior: 'smooth' });
-
-            // Remove the class after the animation ends
             targetSection.addEventListener('animationend', () => {
               targetSection.classList.remove('bounce-animation');
-            }, { once: true }); // Ensure the listener is removed after execution
+            }, { once: true });
           }
         }
       });
+      this.navLinkUnlisteners.push(unlisten);
     });
+
+    // Dispatch a resize event after a delay to recalculate particle background dimensions
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 200);
+  }
+
+  ngOnDestroy(): void {
+    // Remove attached event listeners to avoid memory leaks
+    this.navLinkUnlisteners.forEach(unlisten => unlisten());
+  }
+
+  contactEmail(): void {
+    const email = 'ashish.bhatt.app@gmail.com';
+    const subject = 'Regarding Your Portfolio';
+    window.open(`https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=${email}&su=${encodeURIComponent(subject)}`, '_blank');
+  }
+
+  // Handle Missing Media Errors by providing fallback content
+  handleMediaError(event: Event) {
+    const target = event.target as HTMLImageElement | HTMLVideoElement;
+
+    if (target instanceof HTMLImageElement) {
+      target.src = 'assets/fallback-image.png'; // Fallback for images
+    } else if (target instanceof HTMLVideoElement) {
+      // Fallback for video: set poster image and hide video element
+      target.setAttribute('poster', 'assets/fallback-image.png'); // Set poster image as fallback
+      target.style.display = 'none'; // Hide the video itself
+
+      // Create and append a fallback image element
+      const fallbackImage = document.createElement('img');
+      fallbackImage.src = 'assets/fallback-image.png';
+      fallbackImage.alt = 'Video not available';
+      fallbackImage.classList.add('fallback-media');
+      target.parentElement?.appendChild(fallbackImage);
+    }
   }
 
 }
+
+

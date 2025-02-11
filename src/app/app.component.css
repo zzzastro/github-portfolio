@@ -296,3 +296,43 @@ section {
     background-color: inherit; /* Prevent hover background change */
     color: inherit; /* Prevent hover text color change */
   }
+
+  /* ----------------------------------------------------------------- */
+/* Replaced background gradient of video controls for chromium based browsers*/
+video::-webkit-media-controls-panel {
+  background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)) !important;
+  background-image: none !important;
+  opacity: 1 !important;
+}
+
+/* Remove enclosure gradient */
+video::-webkit-media-controls-enclosure {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+/* Black controls for better visibility */
+video::-webkit-media-controls-play-button,
+video::-webkit-media-controls-mute-button,
+video::-webkit-media-controls-fullscreen-button,
+video::-webkit-media-controls-toggle-closed-captions-button,
+video::-webkit-media-controls-overflow-menu-button {
+  filter: invert(1) !important; /* Inverts white to black */
+}
+
+/* Black text in time displays */
+video::-webkit-media-controls-current-time-display,
+video::-webkit-media-controls-time-remaining-display {
+  color: #000000 !important;
+  text-shadow: none !important;
+}
+
+/* Progress bar handle */
+video::-webkit-media-controls-timeline::-webkit-slider-thumb {
+  background: #000000 !important;
+}
+
+/* Volume slider handle */
+video::-webkit-media-controls-volume-slider::-webkit-slider-thumb {
+  background: #000000 !important;
+}

@@ -55,7 +55,7 @@
           <div class="project-image">
             <ng-container *ngIf="project.media.type === 'video'; else imageTemplate">
               <!-- Video with fallback on error -->
-              <video [src]="project.media.src" controls (error)="handleMediaError($event)">
+              <video [src]="project.media.src" controls [muted]="true" defaultMuted poster="./assets/play_vid.png" (error)="handleMediaError($event)">
                 <!-- Fallback poster for video if it doesn't load -->
                 <img [src]="'assets/fallback-image.png'" alt="Video failed" class="fallback-image" />
               </video>

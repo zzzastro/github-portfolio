@@ -72,11 +72,19 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 100);
 
     // Attach click event listeners to navigation links using Renderer2
-    const navLinks = document.querySelectorAll('.nav-center a');
-    navLinks.forEach(link => {
+    const anchorLinks = document.querySelectorAll('a[href^="#"]');
+    anchorLinks.forEach(link => {
+      // Skip any link that should be handled by its own component (portfolio link)
+      if ((link as HTMLElement).classList.contains('portfolio-link')) {
+        return;
+      }
       const unlisten = this.renderer.listen(link, 'click', (event: Event) => {
         event.preventDefault();
         const targetId = (link as HTMLAnchorElement).getAttribute('href');
+        if (targetId === '#' || targetId === '') {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
         if (targetId) {
           const targetSection = document.querySelector(targetId) as HTMLElement;
           if (targetSection) {

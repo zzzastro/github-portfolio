@@ -25,12 +25,62 @@
   }
 }
 
-.nav-left .logo {
+.nav-left .logo.portfolio-link {
   font-size: 1.2rem;
   font-weight: bold;
   text-decoration: none;
-  color: #fff;
+  /* Red and black gradient background */
+  background: linear-gradient(to right,
+      #ad1400 0%,
+      /* #2d2d2d 50%, */
+      #383838 50%,
+      #ad1400 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  /* Animate the gradient */
+  animation: red-black 4s linear infinite;
+  /* Add display block or inline-block */
+  display: inline-block;
+  /* Ensure transform works by setting position */
+  position: relative;
+  /* Smooth transition */
+  transition: all 0.3s ease;
 }
+
+/* Keyframes for smooth gradient animation */
+@keyframes red-black {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+.nav-left .logo.portfolio-link:hover {
+  transform: scale(1.2);
+  filter: brightness(1.2);
+}
+
+/* Keyframes for smooth gradient animation */
+@keyframes red-black {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+.nav-left .logo.portfolio-link:hover {
+  transform: scale(1.05);
+}
+
 
 .nav-center {
   list-style: none;
@@ -83,7 +133,7 @@
   .nav-center li a {
     font-size: 0.75rem;
     padding: 0.25rem;
-    color: #fff; 
+    color: #fff;
   }
 
   .nav-right {

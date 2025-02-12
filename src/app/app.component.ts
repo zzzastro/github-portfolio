@@ -47,6 +47,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       media: { type: 'image', src: 'assets/projects/project.jpg' },
       link: ''
     },
+    {
+      title: 'Personal Portfolio',
+      description: 'A personal portfolio project to showcase my information, skills, and projects.',
+      media: { type: 'image', src: 'assets/projects/portfolio-project.png' },
+      link: 'https://github.com/zzzastro/github-portfolio'
+    },
 
   ];
 

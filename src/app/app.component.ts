@@ -31,8 +31,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     },
     {
       title: 'Noteapp',
-      description: 'A simple notes application for creating and managing notes.',
-      media: { type: 'video', src: 'assets/projects/project2.mp4' },
+      description: 'A modern, feature-rich note-taking application built with Django & Tailwind.',
+      media: { type: 'video', src: 'assets/projects/noteapp_project.mp4' },
       link: 'https://github.com/zzzastro/Noteapp'
     },
     {
